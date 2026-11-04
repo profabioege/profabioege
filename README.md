@@ -20,7 +20,7 @@ Professor de História, Filosofia e Sociologia há cerca de 15 anos, com MBA em 
 | 📊 **Acompanhamento pedagógico** | Avaliação pelo professor e indicadores para a gestão escolar |
 | 🏫 **Pronta para escolas** | Arquitetura multi-escola, perfis por papel e login por e-mail ou Google |
 
-🔗 Repositório: [**iah-platform**](https://github.com/profabioege/iah-platform)
+🔗 Repositório: [**iah-platform**](https://github.com/profabioege/iah-platform) · 🖥️ [Demonstração](https://iah-platform.vercel.app)
 
 ### 📍 Em que estágio está
 
@@ -46,10 +46,6 @@ Professor de História, Filosofia e Sociologia há cerca de 15 anos, com MBA em 
 ## 🛠️ Como construo
 
 `TypeScript` · `Next.js 15` · `Supabase / PostgreSQL` · `Auth.js` · desenvolvimento assistido por IA · documentação de produto e decisões versionada junto ao código
-
-## 📚 Outros projetos
-
-- [**Filosofia**](https://github.com/profabioege/Filosofia): protótipo de app de apoio ao ensino de Filosofia
 
 ---
 
