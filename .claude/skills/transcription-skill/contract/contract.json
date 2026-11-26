@@ -1,0 +1,394 @@
+{
+ "id": "transcription-skill",
+ "skill_id": "transcription-skill",
+ "name": "Transcription Skill",
+ "version": "0.15.0",
+ "contract_version": "1.0",
+ "description": "Speech recognition: audio/video in, structured Transcript (segments, optional word timestamps, language, provenance) and SpeechEvent candidates out. Not an agent, not a subtitle renderer, not a media analyzer.",
+ "capabilities": [
+  "speech_recognition",
+  "word_timestamps",
+  "language_detection",
+  "speech_intervals",
+  "transcript_validation",
+  "transcript_export:json",
+  "transcript_export:srt",
+  "transcript_export:vtt",
+  "transcript_export:tsv",
+  "transcript_export:txt",
+  "deterministic_cache",
+  "offline_mode",
+  "engine_registry",
+  "input_path_policy",
+  "output_path_policy",
+  "custom_vocabulary",
+  "speaker_merge",
+  "word_index",
+  "dictionary_word_segmentation",
+  "follow_growing_files",
+  "chunked_long_recordings",
+  "transcript_search",
+  "domain_vocabulary",
+  "post_correction",
+  "transcript_selection"
+ ],
+ "engine_contract": {
+  "schema": "transcription-skill/engine-spec/0.1",
+  "execution_modes": [
+   "local",
+   "remote"
+  ],
+  "capabilities": [
+   "local_execution",
+   "remote_execution",
+   "network_required",
+   "local_model",
+   "model_download",
+   "word_timestamps",
+   "language_detection",
+   "custom_vocabulary"
+  ],
+  "offline": false
+ },
+ "engines": [
+  {
+   "id": "faster_whisper",
+   "version": null,
+   "execution_mode": "local",
+   "description": "Whisper via CTranslate2, running locally on CPU/GPU. Reference local engine.",
+   "available": false,
+   "unavailable_reason": "pinned snapshot: availability comes from the installed Skill's contract / doctor",
+   "requires_network": false,
+   "deterministic": true,
+   "capabilities": [
+    "local_execution"
+   ],
+   "supported_languages": [],
+   "supported_models": [],
+   "default_model": "base",
+   "models": []
+  },
+  {
+   "id": "haas_ja",
+   "version": null,
+   "execution_mode": "local",
+   "description": "Haas-ja-v1.0 (Japanese FastConformer-TDT, NeMo) via haas-asr, running locally on an NVIDIA GPU. Optional engine: Linux + CUDA + Python 3.11+ only; Japanese only; custom vocabulary.",
+   "available": false,
+   "unavailable_reason": "pinned snapshot: availability comes from the installed Skill's contract / doctor",
+   "requires_network": false,
+   "deterministic": false,
+   "capabilities": [
+    "local_execution"
+   ],
+   "supported_languages": [],
+   "supported_models": [],
+   "default_model": "Haas-ja-v1.0",
+   "models": []
+  },
+  {
+   "id": "qwen3_asr",
+   "version": null,
+   "execution_mode": "local",
+   "description": "Qwen3-ASR-1.7B with Qwen3-ForcedAligner-0.6B word timestamps (Apache-2.0), via qwen-asr on a CUDA GPU or the CPU. Optional engine: Python 3.10+; 11 languages with word timestamps; never downloads at run time.",
+   "available": false,
+   "unavailable_reason": "pinned snapshot: availability comes from the installed Skill's contract / doctor",
+   "requires_network": false,
+   "deterministic": false,
+   "capabilities": [
+    "local_execution"
+   ],
+   "supported_languages": [],
+   "supported_models": [],
+   "default_model": "Qwen3-ASR-1.7B",
+   "models": []
+  },
+  {
+   "id": "speechcpp",
+   "version": null,
+   "execution_mode": "local",
+   "description": "speech.cpp (C++ on ggml) through its `speech` command: ReazonSpeech v2, parakeet-tdt_ctc-0.6b-ja and Haas-ja-v1.0 for Japanese and parakeet-tdt-0.6b-v3 for 25 European languages, with word timestamps, and Qwen3-ASR in 30 languages, on Metal, Vulkan or the CPU with no Python and no CUDA. Optional engine: needs `speech` 0.10.0+ on PATH and models fetched with `speech pull`; recognizes by silero-vad regions; never downloads.",
+   "available": false,
+   "unavailable_reason": "pinned snapshot: availability comes from the installed Skill's contract / doctor",
+   "requires_network": false,
+   "deterministic": false,
+   "capabilities": [
+    "local_execution"
+   ],
+   "supported_languages": [],
+   "supported_models": [],
+   "default_model": "reazonspeech-v2",
+   "models": []
+  },
+  {
+   "id": "whisperx",
+   "version": null,
+   "execution_mode": "local",
+   "description": "whisperX: Whisper (faster-whisper) batched over voice-activity regions, with wav2vec2 forced alignment for word timestamps. Optional engine: Python 3.10+, English and Japanese; no diarization.",
+   "available": false,
+   "unavailable_reason": "pinned snapshot: availability comes from the installed Skill's contract / doctor",
+   "requires_network": false,
+   "deterministic": false,
+   "capabilities": [
+    "local_execution"
+   ],
+   "supported_languages": [],
+   "supported_models": [],
+   "default_model": "large-v3",
+   "models": []
+  }
+ ],
+ "tools": [
+  {
+   "name": "transcription/transcribe",
+   "description": "Transcribe an audio or video file into a validated Transcript.",
+   "input": {
+    "input": "path",
+    "language": "iso639-1 | null",
+    "engine": "engine id",
+    "model": "model name",
+    "word_timestamps": "bool",
+    "temperature": "0..1",
+    "initial_prompt": "str | null",
+    "beam_size": "1..10",
+    "audio_stream": "int >= 0 | null",
+    "asset_id": "str | null",
+    "budget": {
+     "timeout": "seconds",
+     "max_audio_seconds": "seconds"
+    },
+    "cache": "bool",
+    "workspace": "path | null",
+    "offline": "bool",
+    "allowed_input_roots": "list[dir] | null",
+    "dry_run": "bool",
+    "vad_filter": "bool",
+    "vocabulary": "{written form: list[reading]} | null",
+    "word_segmentation": "engine | dictionary (dictionary: language ja and word_timestamps true; needs the optional [ja] extra)",
+    "speaker_turns": "diarization-skill/turns@1 document | path | null (merged after recognition, never cached)",
+    "chunk_seconds": "30..3600 | null (chunked long recording, cut at pauses; needs language)",
+    "parallel": "1..8 (chunks recognized at a time; chunk_seconds only)",
+    "speech_regions": "media-analysis-skill speech_regions response | result | observation | path | null (chunk_seconds only)",
+    "domain_vocabulary": "{programme: str | list[str], slides: slide-sync/deck@1 document | path | list[str], speakers: list[str], terms: list[str], max_terms: 1..200 (default 50), japanese: bool (default false)} | null (terms passed as the engine's initial_prompt or custom vocabulary; recorded in provenance.vocabulary)",
+    "corrections": "list[{from: str, to: str, match: word | substring (default word)}] | {from: to} | null (applied to segment text after recognition; every replacement in provenance.corrections.applied with its time)"
+   },
+   "output": {
+    "transcript": "Transcript",
+    "cache_hit": "bool",
+    "cache_key": "sha256 hex",
+    "warnings": "list[str]"
+   },
+   "deterministic": true,
+   "side_effects": [
+    "writes cache under workspace",
+    "writes per-chunk cache under workspace (chunk_seconds)"
+   ]
+  },
+  {
+   "name": "transcription/segments",
+   "description": "Derive SpeechEvent-compatible candidates from a Transcript (one per segment, optional gap merge).",
+   "input": {
+    "transcript": "Transcript | path",
+    "merge_gap": "seconds >= 0"
+   },
+   "output": {
+    "events": "list[SpeechEvent]"
+   },
+   "deterministic": true,
+   "side_effects": []
+  },
+  {
+   "name": "transcription/export",
+   "description": "Render a Transcript as json, srt, vtt, tsv or txt (plain timed text, no styling).",
+   "input": {
+    "transcript": "Transcript | path",
+    "format": "json|srt|vtt|tsv|txt",
+    "output": "path",
+    "allowed_output_roots": "list[dir] | null"
+   },
+   "output": {
+    "output": "path",
+    "format": "str"
+   },
+   "deterministic": true,
+   "side_effects": [
+    "writes output file"
+   ]
+  },
+  {
+   "name": "transcription/speakers",
+   "description": "Fill segments[].speaker_id (and words[].speaker_id) of a Transcript from diarization-skill speaker turns (diarization-skill/turns@1), with diarization-skill's own ASSIGN rule. No diarization here. Follows diarization-skill's speaker-id assignment rule and passes its conformance fixtures at the version in `rule`.",
+   "rule": {
+    "owner": "diarization-skill",
+    "spec": "https://github.com/kajisho5/diarization-skill/blob/main/docs/speaker_id_rule.md",
+    "method": "max_overlap_with_exclusive_turns",
+    "conformance_fixtures": "diarization-skill/speaker-id-conformance@1",
+    "conformance_fixture_version": "1"
+   },
+   "input": {
+    "transcript": "Transcript | path",
+    "turns": "diarization-skill/turns@1 document | path",
+    "allow_source_mismatch": "bool",
+    "replace": "bool"
+   },
+   "output": {
+    "transcript": "Transcript (speaker_id filled, speaker_assignment recorded)",
+    "warnings": "list[str]"
+   },
+   "deterministic": true,
+   "side_effects": []
+  },
+  {
+   "name": "transcription/find",
+   "description": "Find a phrase in one or more Transcripts: every hit with its start and end, segment ids, word indices, speaker_id and neighbouring text. Exact, then normalized matching (NFKC width folding, casefold, long vowel marks, whitespace and punctuation ignored, across word and segment boundaries), then optional approximate matching labelled with its ratio. A read-only query: no margin, no cut range, no ranking.",
+   "input": {
+    "transcript": "Transcript | path (or transcripts)",
+    "transcripts": "list[Transcript | path] (1..100; or transcript)",
+    "phrase": "str (1..500 characters)",
+    "fuzzy": "0.5..1.0 | null (approximate matches with ratio >= fuzzy; phrase of at most 64 characters after folding)",
+    "context": "0..10 (neighbouring segments each side, default 1)"
+   },
+   "output": {
+    "phrase": "str",
+    "normalized_phrase": "str",
+    "normalization": "str",
+    "fuzzy": "number | null",
+    "context": "int",
+    "count": "int",
+    "hits": "list[{source, transcript_id, match: exact|normalized|approximate, ratio, start, end, timing: word|segment, segment_ids, word_indices (null when segment-timed), speaker_id, speaker_ids, text, segment_text, context: {before, after}}] (time order within each transcript, transcripts in the order given; empty when the phrase is not spoken)",
+    "transcripts": "list[{source, transcript_id, language, segments, words, word_timed, hits}]"
+   },
+   "deterministic": true,
+   "side_effects": []
+  },
+  {
+   "name": "transcription/select",
+   "description": "Turn a selection of words and sentences (word index ranges and / or segment ids, to remove or to keep) into the time spans that would be removed, each with the window its in and out edges may use: the gap to the kept speech before and after it, found by time. Also the sentences touched, their speakers and the seconds of speech. A kept word that overlaps removed speech is refused (selection_overlaps_kept_speech) unless overlap is include. A read-only query: no margin, no cut (video-editing-skill ripple places the cuts).",
+   "rule": {
+    "version": "transcript-selection@1",
+    "selection": "word index ranges [[first, last], ...] (inclusive) and / or segment ids; their union. Never seconds",
+    "units": "the words of each segment that has words, the segment itself where words is null (named by its id only)",
+    "remove": "the selected units are removed",
+    "keep": "every unit not selected is removed, and the time before the first kept unit and after the last one",
+    "spans": "removed units with no kept unit starting between them, in time order; start / end: the speech they cover",
+    "windows": "in: [end of the kept speech before, the span's start] (0 when none); out: [the span's end, start of the kept speech after] (the duration when none); neighbours by time, not by index",
+    "overlap": "a kept unit overlapping a removed span: refuse (selection_overlaps_kept_speech) or include (removed too, listed)",
+    "applies": "nothing: no margin, no cut, no change to the transcript; video-editing-skill ripple places the cuts"
+   },
+   "input": {
+    "transcript": "Transcript | path",
+    "mode": "remove | keep",
+    "words": "list[[first, last]] (inclusive word indices) | null",
+    "segments": "list[segment id] | null (whole segments; at least one of words / segments)",
+    "overlap": "refuse | include (default refuse)"
+   },
+   "output": {
+    "rule": "the rule (version transcript-selection@1)",
+    "mode": "str",
+    "overlap": "str",
+    "transcript_id": "str",
+    "asset_id": "str",
+    "language": "str",
+    "duration": "seconds",
+    "selection": "{words, segments}",
+    "counts": "{units, words, removed_units, removed_words, kept_units, spans, sentences_whole, sentences_part}",
+    "speech_seconds": "seconds of removed speech",
+    "most_seconds": "seconds the widest cuts would remove",
+    "spans": "list[{id, start, end, in: {lo, hi, after_kept}, out: {lo, hi, before_kept}, word_ranges, units, segment_ids, speaker_ids, text, speech_seconds, most_seconds}] (time order)",
+    "sentences": "list[{segment_id, speaker_id, start, end, text, removed: whole | part, removed_text, removed_units, units, speech_seconds}]",
+    "included_by_overlap": "list[{word_index, segment_id, text, start, end, speaker_id}]",
+    "applied": "false",
+    "next": "str"
+   },
+   "deterministic": true,
+   "side_effects": []
+  },
+  {
+   "name": "transcription/check",
+   "description": "Validate a Transcript document against the contract.",
+   "input": {
+    "transcript": "Transcript | path"
+   },
+   "output": {
+    "ok": "bool",
+    "errors": "list[str]",
+    "warnings": "list[str]"
+   },
+   "deterministic": true,
+   "side_effects": []
+  },
+  {
+   "name": "transcription/microphones",
+   "description": "One transcript per microphone: 2..8 microphone tracks of one recording (one person per microphone), each transcribed on its own with word timestamps through transcription/transcribe, merged by time into one Transcript whose speaker_id is the microphone's name (no diarization). A word recognized on one microphone is dropped as cross-talk when another microphone is louder by at least crosstalk_margin_db over the word's span and recognized a word there; otherwise it is kept, so two people talking at once are both kept. Recorded under microphone_merge.",
+   "rule": {
+    "method": "per_microphone_transcripts_merged_by_time",
+    "crosstalk": "drop a word when another microphone is louder by >= crosstalk_margin_db (RMS dBFS over the word's span) and recognized an overlapping word",
+    "default_crosstalk_margin_db": 6.0
+   },
+   "input": {
+    "microphones": "list[{input: path, name: str | null (default MIC_01, MIC_02, ...), audio_stream: int >= 0 | null}] (2..8)",
+    "crosstalk_margin_db": "0..40 (default 6)",
+    "...": "every transcription/transcribe input except input, audio_stream, speaker_turns, dry_run, speech_regions (shared by all microphones; word_timestamps is always true); the files must agree in length within 0.5 s"
+   },
+   "output": {
+    "transcript": "Transcript (speaker_id = microphone name, microphone_merge recorded)",
+    "microphones": "list[{name, cache_hit, cache_key}]",
+    "warnings": "list[str]"
+   },
+   "deterministic": true,
+   "side_effects": [
+    "writes cache under workspace, once per microphone"
+   ]
+  },
+  {
+   "name": "transcription/batch",
+   "description": "Run many transcription/transcribe requests in one process. One item's failure does not abort the others; each result is reported independently in order.",
+   "input": {
+    "items": "list[transcription/transcribe input]"
+   },
+   "output": {
+    "results": "list[{ok: bool, result: transcription/transcribe output} | {ok: bool, error: {code, message, details}}]"
+   },
+   "deterministic": true,
+   "side_effects": [
+    "writes cache under workspace, once per item"
+   ]
+  }
+ ],
+ "provides": [
+  {
+   "id": "transcribe.audio",
+   "lifecycle": "EXPERIMENTAL",
+   "tool_id": "transcription/transcribe"
+  }
+ ],
+ "dependencies": [],
+ "not_provided": [
+  "AI provider",
+  "prompts",
+  "reasoning",
+  "inference",
+  "decisions",
+  "approvals",
+  "production planning",
+  "speaker diarization",
+  "speaker identification",
+  "semantic segmentation",
+  "chapter generation",
+  "subtitle styling",
+  "subtitle rendering",
+  "video editing",
+  "media measurement",
+  "cloud ASR",
+  "remote engine",
+  "HTTP client",
+  "credentials",
+  "best-engine selection",
+  "plugin loading",
+  "arbitrary command execution"
+ ],
+ "schemas": {
+  "transcript": "transcription-skill/transcript/0.1",
+  "speech_event": "transcription-skill/speech-event/0.1",
+  "engine_spec": "transcription-skill/engine-spec/0.1"
+ }
+}
