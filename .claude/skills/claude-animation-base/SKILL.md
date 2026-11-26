@@ -1,6 +1,6 @@
 ---
 name: claude-animation-base
-description: Faz desenhos animados curtos pintados à mão (aquarela, traço que "ferve", 2D chapado, sem texto) com p5.js + p5.brush, estrelando o personagem Clawd (31 emoções, vistas, chapéus, danças) ou qualquer personagem novo. Use quando o usuário pedir um desenho animado, cartoon, animação pintada à mão, animação do Clawd, vídeo animado com personagem, curta animado ou "claude animation base". Não use para vídeos de produto/lançamento com UI (use onetake), B-roll de colagem (use gbro-collage-broll) ou quando o usuário pedir Remotion.
+description: Faz desenhos animados curtos pintados à mão (aquarela, traço que "ferve", 2D chapado, sem texto) com p5.js + p5.brush, estrelando o personagem Clawd (31 emoções, vistas, chapéus, danças) ou qualquer personagem novo. Use quando o usuário pedir um desenho animado, cartoon, animação pintada à mão, animação do Clawd, vídeo animado com personagem, curta animado ou "claude animation base". Não use para vídeos de produto/lançamento com UI (use hyperframes ou motion-design), B-roll de colagem (use gbro-collage-broll) ou quando o usuário pedir Remotion.
 license: MIT (kit de John Heibel, github.com/JohnHeibel/ClaudeAnimationBase)
 ---
 

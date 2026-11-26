@@ -1,6 +1,6 @@
 ---
 name: openmontage
-description: Produz vídeos completos com o OpenMontage (github.com/OpenMontageInc/OpenMontage), um estúdio de produção agêntico com 12 pipelines (explicativo animado, documentário com footage real, trailer, curta animado, vitrine 3D em Blender, filme de produto, vídeo a partir de uma referência do YouTube/Reels/TikTok), pesquisa, roteiro, narração, música, legendas e autorrevisão. Use quando o usuário pedir "OpenMontage", "com o OpenMontage", ou quiser um vídeo produzido de ponta a ponta a partir de uma ideia ou de um vídeo de referência e aceitar o fluxo do OpenMontage. Não use quando o usuário nomear outra ferramenta (Remotion, HyperFrames, Onetake, Lemo-Opuscar, motion-design).
+description: Produz vídeos completos com o OpenMontage (github.com/OpenMontageInc/OpenMontage), um estúdio de produção agêntico com 12 pipelines (explicativo animado, documentário com footage real, trailer, curta animado, vitrine 3D em Blender, filme de produto, vídeo a partir de uma referência do YouTube/Reels/TikTok), pesquisa, roteiro, narração, música, legendas e autorrevisão. Use quando o usuário pedir "OpenMontage", "com o OpenMontage", ou quiser um vídeo produzido de ponta a ponta a partir de uma ideia ou de um vídeo de referência e aceitar o fluxo do OpenMontage. Não use quando o usuário nomear outra ferramenta (Remotion, HyperFrames, motion-design, claude-animation-base).
 ---
 
 # OpenMontage (ponte)
