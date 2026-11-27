@@ -1,2 +1,6 @@
 # Aplicativo OpenMontage baixado pela skill openmontage (não versionar)
 /openmontage/
+
+# Artefatos de build gerados ao instalar o pacote Python da skill de transcrição (não versionar)
+/.claude/skills/transcription-skill/build/
+/.claude/skills/transcription-skill/src/*.egg-info/
